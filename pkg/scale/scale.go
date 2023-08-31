@@ -10,35 +10,44 @@ import (
 	"golang.org/x/image/draw"
 )
 
-type Axis interface {
-	GetLength() int
+type Mode interface {
+	value() int
 }
 
 type Width int
 type Height int
+type Percentage int
 
-func (width Width) GetLength() int {
+func (width Width) value() int {
 	return int(width)
 }
 
-func (height Height) GetLength() int {
+func (height Height) value() int {
 	return int(height)
 }
 
-func Scale(reader io.Reader, axis Axis) ([]byte, error) {
+func (percentage Percentage) value() int {
+	return int(percentage)
+}
+
+func Scale(reader io.Reader, mode Mode) ([]byte, error) {
 	inputImage, _, err := image.Decode(reader)
 	if err != nil {
 		return nil, err
 	}
 	var x float64
-	switch axis.(type) {
+	switch mode.(type) {
 	case Width:
 		{
-			x = float64(axis.GetLength()) / float64(inputImage.Bounds().Dx())
+			x = float64(mode.value()) / float64(inputImage.Bounds().Dx())
 		}
 	case Height:
 		{
-			x = float64(axis.GetLength()) / float64(inputImage.Bounds().Dy())
+			x = float64(mode.value()) / float64(inputImage.Bounds().Dy())
+		}
+	case Percentage:
+		{
+			x = float64(mode.value()) / 100
 		}
 	default:
 		{

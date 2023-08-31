@@ -10,7 +10,7 @@ func TestScale(t *testing.T) {
 	if err != nil {
 		t.FailNow()
 	}
-	result, err := Scale(image, Width(200))
+	result, err := Scale(image, Percentage(100))
 	if err != nil {
 		t.FailNow()
 	}
